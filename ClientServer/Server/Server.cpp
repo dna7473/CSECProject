@@ -127,6 +127,7 @@ int main(void)
                 iSendResult = send(ClientSocket, "ACK", strlen("ACK"), 0);
                 iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
                 cout << "MAC :" << recvbuf << endl;
+                memset(recvbuf, 0, sizeof recvbuf);
             }
             else if (choise.find("2") != std::string::npos)
             {
@@ -163,6 +164,7 @@ int main(void)
                        
                     }
                     myfile.close();
+                    memset(recvbuf, 0, sizeof recvbuf);
                 }
                 else
                 {
@@ -186,16 +188,15 @@ int main(void)
 
                         iResult+= recv(ClientSocket, recvbuf, recvbuflen, 0);
                         iSendResult = send(ClientSocket, "ACK", strlen("ACK"), 0);
-                        cout<<recvbuf;
-                        cout<<"------------"<<endl;
                         // cout<<iResult<<"/"<<len<<endl;
                         if (iResult>=len )
                         {
-                            cout << "Done! All running processes received. " << endl;
+                            cout << "Done! All running processes printed on client. " << endl;
                             break;
                         }
                        
                     }
+                    memset(recvbuf, 0, sizeof recvbuf);
 
                 }else{
                     cout<<"Failed to get the running processes from the client!"<<endl;

