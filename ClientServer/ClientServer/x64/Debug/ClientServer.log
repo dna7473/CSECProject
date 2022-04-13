@@ -5,15 +5,17 @@ C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(121
 C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(136,42): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned long', possible loss of data
 C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(137,44): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned long', possible loss of data
 C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(294,76): warning C4267: 'argument': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(413,84): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(419,84): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(434,66): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(443,74): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(444,108): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(445,74): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(452,66): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(464,66): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(470,66): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(488,120): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(504,77): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  ClientServer.vcxproj -> C:\Users\drago\Source\Repos\CSECProject\ClientServer\x64\Debug\ClientServer.exe
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(409,84): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(415,84): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(420,84): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(429,84): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(441,66): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(450,74): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(451,108): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(452,74): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(459,66): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(471,66): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(477,66): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(495,120): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\drago\source\repos\CSECProject\ClientServer\ClientServer\Client.cpp(511,77): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  ClientServer.vcxproj -> C:\Users\drago\source\repos\CSECProject\ClientServer\x64\Debug\ClientServer.exe

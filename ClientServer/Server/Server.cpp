@@ -245,7 +245,7 @@ int main(void)
     // Receive until the peer shuts down the connection
     do
     {
-        string choise;
+        string choice;
         string decryptedString1;
         string decryptedString2;
         while (true)
@@ -253,38 +253,47 @@ int main(void)
             cout << "\t---------------Menu------------------" << endl;
             cout << "1. Tell the client to send its information" << endl;
             cout << "2. Tell the client to send a file" << endl;
-            cout << "3. tell the client to send current running process" << endl;
+            cout << "3. Tell the client to list current running processes" << endl;
             cout << "4. Quit" << endl;
             cout << "Input choice: ";
-            cin >> choise;
-            if (choise.find("1") != std::string::npos)
+            cin >> choice;
+            if (choice.find("1") != std::string::npos)
             {
                 string t = "1";
                 iSendResult = send(ClientSocket, t.c_str(), t.length(), 0);
                 iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
                 decryptedString1 = decryption(recvbuf);
-                cout << "IP :" << decryptedString1 << endl;
+                cout << "IP : " << decryptedString1 << endl;
                 iSendResult = send(ClientSocket, "ACK", strlen("ACK"), 0);
                 iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
                 decryptedString2 = convertToString(recvbuf);
                 decryptedString2 = decryption(recvbuf);
-                cout << "MAC :" << decryptedString2 << endl;
+                cout << "MAC : " << decryptedString2 << endl;
+                iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+                decryptedString2 = convertToString(recvbuf);
+                decryptedString2 = decryption(recvbuf);
+                cout << "Hostname : " << decryptedString2 << endl;
+
+                iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+                decryptedString2 = convertToString(recvbuf);
+                decryptedString2 = decryption(recvbuf);
+                cout << "Windows Version : " << decryptedString2 << endl;
                 memset(recvbuf, 0, sizeof recvbuf);
             }
-            else if (choise.find("2") != std::string::npos)
+            else if (choice.find("2") != std::string::npos)
             {
 
                 string t = "2";
                 iSendResult = send(ClientSocket, t.c_str(), t.length(), 0);
                 cout << "Input file name: ";
-                cin >> choise;
-                cout<<choise;
-                iSendResult = send(ClientSocket, choise.c_str(), choise.length(), 0);
+                cin >> choice;
+                cout<<choice;
+                iSendResult = send(ClientSocket, choice.c_str(), choice.length(), 0);
                 iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
                 if (string(recvbuf).find("1") != std::string::npos)
                 {
                     ofstream myfile;
-                    myfile.open(choise.c_str());
+                    myfile.open(choice.c_str());
                     cout<<"File size1: "<<recvbuf<<endl;
                     iSendResult = send(ClientSocket, "ACK", strlen("ACK"), 0);
                     iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
@@ -313,7 +322,7 @@ int main(void)
                     cout << "Client failed to open that file" << endl;
                 }
             }
-            else if (choise.find("3") != std::string::npos)
+            else if (choice.find("3") != std::string::npos)
             {
                 string t = "3";
                 iSendResult = send(ClientSocket, t.c_str(), t.length(), 0);
@@ -345,7 +354,7 @@ int main(void)
                 }
 
             }
-            else if (choise.find("4") != std::string::npos)
+            else if (choice.find("4") != std::string::npos)
             {
                 string t = "4";
                 iSendResult = send(ClientSocket, t.c_str(), t.length(), 0);

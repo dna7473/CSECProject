@@ -189,11 +189,11 @@ tuple1 getMAC()
         pAdapterInfo->Address[0], pAdapterInfo->Address[1],
         pAdapterInfo->Address[2], pAdapterInfo->Address[3],
         pAdapterInfo->Address[4], pAdapterInfo->Address[5]);
-        printf("Address: %s, mac: %s\n", pAdapterInfo->IpAddressList.IpAddress.String, mac_addr);
+        //printf("Address: %s, mac: %s\n", pAdapterInfo->IpAddressList.IpAddress.String, mac_addr);
 
             //pulls IPs
         memcpy(ipAddress, pAdapterInfo->IpAddressList.IpAddress.String, strlen(ipAddress));
-        printf("Address: %s, mac: %s\n", ipAddress, mac_addr);
+        //printf("Address: %s, mac: %s\n", ipAddress, mac_addr);
 
             // print them all, return the last one.
             // return mac_addr;
@@ -309,16 +309,12 @@ int __cdecl main(int argc, char **argv)
     //
     //
     //These are the bytes being sent
-    const char *sendbuf = "What if we chnage this what does it do";
+    //const char *sendbuf = "What if we chnage this what does it do";
     //
     //
     //
 
     tuple1 information = getMAC();
-    printf(information.ipAddress);
-    printf("\n");
-    printf(information.macAddress);
-    cout << endl;
 
     char recvbuf[DEFAULT_BUFLEN];
     int iResult;
@@ -419,7 +415,18 @@ int __cdecl main(int argc, char **argv)
             iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
 
             cout << username << "..." << endl;
-            iResult = send(ConnectSocket, username, username_len, 0);
+            encryptedString = encryption(username);
+            strcpy(encrypted_star, encryptedString.c_str());
+            iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
+
+            std::ostringstream stream;
+            stream << info.dwMajorVersion;
+            char string1[sizeof(info.dwMajorVersion)];
+            strcpy(string1, stream.str().c_str());
+
+            encryptedString = encryption(string1);
+            strcpy(encrypted_star, encryptedString.c_str());
+            iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
             memset(recvbuf, 0, sizeof recvbuf);
         }
         else if (rc.find("2") != std::string::npos)
