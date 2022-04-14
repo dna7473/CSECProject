@@ -35,7 +35,7 @@ static inline bool is_base64(unsigned char c) {
 }
 
 std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len) {
-    std::string ret;
+    std::string ret = "";
     int i = 0;
     int j = 0;
     unsigned char char_array_3[3];
@@ -83,7 +83,7 @@ std::string base64_decode(std::string const& encoded_string) {
     int j = 0;
     int in_ = 0;
     unsigned char char_array_4[4], char_array_3[3];
-    std::string ret;
+    std::string ret ="";
 
     while (in_len-- && (encoded_string[in_] != '=') && is_base64(encoded_string[in_])) {
         char_array_4[i++] = encoded_string[in_]; in_++;
@@ -134,12 +134,12 @@ std::string XOR(std::string value, std::string key)
 
 std::string decryption(char* cipher, int size)
 {
-    string decrypted;
+    string decrypted = "";
     string q = ":&";
     char* buff;
-    string decryptedString;
+    string decryptedString = "";
     decrypted = XOR(cipher, q);
-    char* decrypt;
+    char* decrypt = new char[strlen(decrypted.c_str())];
     decryptedString = decrypted.substr(0, decrypted.find("=")) + "=";
     decrypt = new char[strlen(decryptedString.c_str())];
     buff = new char[strlen(decryptedString.c_str())];
@@ -261,18 +261,17 @@ int main(void)
     // Receive until the peer shuts down the connection
     do
     {
-        string choice;
-        string decryptedString1;
-        string decryptedString2;
-        string encryptedString;
-        char encrypted_star[256];
+        string choice = "";
+        string decryptedString1 = "";
+        string decryptedString2 = "";
+        string encryptedString = "";
+        char* encrypted_star = new char[256];
         while (true)
         {
             cout << "\t---------------Menu------------------" << endl;
             cout << "1. Tell the client to send its information" << endl;
             cout << "2. Tell the client to send a file" << endl;
             cout << "3. Tell the client to list current running processes" << endl;
-            cout << "4. Quit" << endl;
             cout << "Input choice: ";
             cin >> choice;
             if (choice.find("1") != std::string::npos)
@@ -316,7 +315,7 @@ int main(void)
 
                 cout << "Input file name: ";
                 cin >> choice;
-                cout<<choice;
+                cout << choice << endl;
 
                 strcpy(encrypted_star, choice.c_str());
                 encryptedString = encryption(encrypted_star, strlen(encrypted_star));
@@ -398,15 +397,6 @@ int main(void)
                     cout<<"Failed to get the running processes from the client!"<<endl;
                 }
 
-            }
-            else if (choice.find("4") != std::string::npos)
-            {
-                string t = "4";
-                strcpy(encrypted_star, t.c_str());
-                encryptedString = encryption(encrypted_star, strlen(encrypted_star));
-                iSendResult = send(ClientSocket, encryptedString.c_str(), encryptedString.length(), 0);
-                cout<<"Quiting"<<endl;
-                break;
             }
             else
             {

